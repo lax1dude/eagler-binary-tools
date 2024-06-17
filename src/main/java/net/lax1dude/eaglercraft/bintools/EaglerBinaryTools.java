@@ -37,9 +37,12 @@ public class EaglerBinaryTools {
 			return;
 		case "obj2mdl-1.5":
 		case "obj2mdl1.5":
+			OBJConverter._main(argz, false);
 			return;
 		case "obj2mdl-1.8":
 		case "obj2mdl1.8":
+		case "obj2mdl":
+			OBJConverter._main(argz, true);
 			return;
 		case "ebp-encode":
 		case "ebpencode":
@@ -63,7 +66,7 @@ public class EaglerBinaryTools {
 	}
 
 	private static void usage() {
-		System.out.println("Usage: java -jar EaglerBinaryTools.jar <epkcompiler|legacy-epkcompiler|epkdecompiler|obj2mdl-1.5|obj2mdl-1.8|ebp-encode|ebp-decode|skybox-gen|eagler-moon-gen|lens-flare-gen> [args...]");
+		System.out.println("Usage: java -jar EaglerBinaryTools.jar <epkcompiler|legacy-epkcompiler|epkdecompiler|obj2mdl-1.5|obj2mdl-1.8|ebp-encode|ebp-decode|skybox-gen|light-mesh-gen|eagler-moon-gen|lens-flare-gen> [args...]");
 		System.out.println(" - 'epkcompiler': Compile an EPK file from a folder");
 		System.out.println(" - 'legacy-epkcompiler': Compile an EPK file in legacy format");
 		System.out.println(" - 'epkdecompiler': Decompile an EPK file into a folder");
@@ -72,6 +75,7 @@ public class EaglerBinaryTools {
 		System.out.println(" - 'ebp-encode': Encode EBP file from PNG");
 		System.out.println(" - 'ebp-decode': Decode EBP file to PNG");
 		System.out.println(" - 'skybox-gen': Generate skybox.dat from OBJ for shader packs");
+		System.out.println(" - 'light-mesh-gen': Generate light_point.dat from OBJ for shader packs");
 		System.out.println(" - 'eagler-moon-gen': Generate eagler_moon.bmp from PNG for shader packs");
 		System.out.println(" - 'lens-flare-gen': Generate lens_streaks.bmp, lens_ghosts.bmp from PNG for shader packs");
 	}

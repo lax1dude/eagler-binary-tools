@@ -48,6 +48,9 @@ public class EPKDecompilerSP {
 	private boolean isFinished = false;
 	private boolean isOldFormat = false;
 	
+	/**
+	 * This class is from the Eaglercraft 1.5 client, with a few modifications
+	 */
 	public EPKDecompilerSP(byte[] data) throws IOException {
 		in2 = new ByteArrayInputStream(data);
 		
