@@ -46,7 +46,7 @@ public class OBJConverter {
 			}
 		}
 		File output = new File(args[1]);
-		System.out.println("Exporting MDL: " + output.getAbsolutePath());
+		System.out.println("Exporting " + (v1_8 ? "1.8" : "1.5") + " MDL: " + output.getAbsolutePath());
 		boolean tex = args[2].equalsIgnoreCase("true") || args[2].equals("1");
 		try(FileOutputStream fs = new FileOutputStream(output)) {
 			convertModel(lns, fs, tex, v1_8);

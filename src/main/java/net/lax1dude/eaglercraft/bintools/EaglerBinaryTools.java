@@ -26,10 +26,13 @@ public class EaglerBinaryTools {
 		System.arraycopy(args, 1, argz, 0, argz.length);
 		switch(args[0].toLowerCase()) {
 		case "epkcompiler":
+		case "epkcompile":
 			EPKCompiler._main(argz);
 			return;
 		case "legacy-epkcompiler":
 		case "legacyepkcompiler":
+		case "legacy-epkcompile":
+		case "legacyepkcompile":
 			EPKCompilerLegacy._main(argz);
 			return;
 		case "epkdecompiler":
@@ -46,12 +49,21 @@ public class EaglerBinaryTools {
 			return;
 		case "ebp-encode":
 		case "ebpencode":
+		case "ebp-encoder":
+		case "ebpencoder":
+			EBPFileEncoder._main(argz);
 			return;
 		case "ebp-decode":
 		case "ebpdecode":
+		case "ebp-decoder":
+		case "ebpdecoder":
+			EBPFileDecoder._main(argz);
 			return;
 		case "skybox-gen":
 		case "skyboxgen":
+			return;
+		case "light-mesh-gen":
+		case "lightmeshgen":
 			return;
 		case "eagler-moon-gen":
 		case "eaglermoongen":
