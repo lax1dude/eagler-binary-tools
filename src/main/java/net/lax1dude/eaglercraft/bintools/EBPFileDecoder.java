@@ -10,6 +10,8 @@ import java.io.OutputStream;
 
 import javax.imageio.ImageIO;
 
+import net.lax1dude.eaglercraft.bintools.utils.LabPBR2Eagler;
+
 /**
  * Copyright (c) 2023-2024 lax1dude. All Rights Reserved.
  * 
@@ -38,30 +40,45 @@ public class EBPFileDecoder {
 	}
 
 	public static void _main(String[] args) throws IOException {
-		if(args.length > 1 && args.length < 4 && args[0].equals("-r")) {
+		boolean labPBR = false;
+		if(args.length > 1 && args[0].equalsIgnoreCase("--labPBR")) {
+			labPBR = true;
+			String[] e = new String[args.length - 1];
+			System.arraycopy(args, 1, e, 0, e.length);
+			args = e;
+		}
+		if(args.length > 1 && args.length < 4 && args[0].equalsIgnoreCase("-r")) {
 			File input = new File(args[1]);
 			if(!input.isDirectory()) {
 				System.err.println("Error: Not a directory: " + input.getAbsolutePath());
 				System.exit(-1);
 				return;
 			}
-			convertDir(input, args.length == 3 ? new File(args[2]) : input);
+			convertDir(input, args.length == 3 ? new File(args[2]) : input, labPBR);
 		}else if(args.length == 2) {
 			System.out.println("Reading input file...");
 			BufferedImage img;
 			try(InputStream is = new FileInputStream(new File(args[0]))) {
-				img = read(is);
+				img = readEBP(is);
+			}
+			if(labPBR) {
+				System.out.println("Converting from Eagler to LabPBR...");
+				LabPBR2Eagler.convertEaglerToLabPBR(img, img);
 			}
 			File output = new File(args[1]);
 			System.out.println("Writing PNG: " + output.getAbsolutePath());
 			ImageIO.write(img, "PNG", output);
 		}else {
-			System.out.println("Usage: ebp-decode <input file> <output file>");
-			System.out.println("       ebp-decode -r <directory> [output directory]");
+			System.out.println("Usage: ebp-decode [--labPBR] <input file> <output file>");
+			System.out.println("       ebp-decode [--labPBR] -r <directory> [output directory]");
 		}
 	}
 
 	public static void convertDir(File inputDir, File outputDir) throws IOException {
+		convertDir(inputDir, outputDir, false);
+	}
+
+	public static void convertDir(File inputDir, File outputDir, boolean labPBR) throws IOException {
 		if(!outputDir.isDirectory() && !outputDir.mkdirs()) {
 			throw new IOException("Could not create directory: " + outputDir.getAbsolutePath());
 		}
@@ -69,7 +86,7 @@ public class EBPFileDecoder {
 		for(int i = 0; i < f.length; ++i) {
 			String name = f[i].getName();
 			if(f[i].isDirectory()) {
-				convertDir(f[i], new File(outputDir, name));
+				convertDir(f[i], new File(outputDir, name), labPBR);
 				continue;
 			}
 			if(!name.toLowerCase().endsWith(".ebp")) {
@@ -79,13 +96,16 @@ public class EBPFileDecoder {
 			System.out.println(f[i].getAbsolutePath());
 			BufferedImage img;
 			try(InputStream is = new FileInputStream(f[i])) {
-				img = read(is);
+				img = readEBP(is);
+			}
+			if(labPBR) {
+				LabPBR2Eagler.convertEaglerToLabPBR(img, img);
 			}
 			ImageIO.write(img, "PNG", ff);
 		}
 	}
 
-	public static BufferedImage read(InputStream is) throws IOException {
+	public static BufferedImage readEBP(InputStream is) throws IOException {
 		if(is.read() != '%' || is.read() != 'E' || is.read() != 'B' || is.read() != 'P') {
 			throw new IOException("Not an EBP file!");
 		}
