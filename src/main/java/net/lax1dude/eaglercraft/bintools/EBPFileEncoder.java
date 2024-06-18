@@ -5,8 +5,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
@@ -27,8 +29,6 @@ import javax.imageio.ImageIO;
  * 
  */
 public class EBPFileEncoder {
-
-	private static final int[] paletteHelper = new int[0xFFFFFF + 1];
 
 	private static void setBit(int idx, boolean v, byte[] bytes) {
 		int idx2 = idx >> 3;
@@ -107,14 +107,15 @@ public class EBPFileEncoder {
 				fos.write(pixels[i] & 0xFF);
 			}
 		}else {
+			Map<Integer,Integer> paletteHelper = new HashMap();
 			fos.write(1); // type is palette
 			fos.write(colorPalette.size()); // write palette size
 			Iterator<Integer> paletteItr = colorPalette.iterator();
 			int paletteIdx = 0;
-			paletteHelper[0] = 0;
+			paletteHelper.put(0, 0);
 			while(paletteItr.hasNext()) {
 				int j = paletteItr.next().intValue();
-				paletteHelper[j] = ++paletteIdx;
+				paletteHelper.put(j, ++paletteIdx);
 				fos.write((j >> 16) & 0xFF);
 				fos.write((j >> 8) & 0xFF);
 				fos.write(j & 0xFF);
@@ -128,7 +129,7 @@ public class EBPFileEncoder {
 			byte[] completedBitSet = new byte[(totalBits & 7) == 0 ? (totalBits >> 3) : ((totalBits >> 3) + 1)];
 			int bsi = 0;
 			for(int i = 0; i < pixels.length; ++i) {
-				int wr = paletteHelper[pixels[i]];
+				int wr = paletteHelper.get(pixels[i]);
 				for(int j = bpp - 1; j >= 0; --j) {
 					setBit(bsi++, ((wr >> j) & 1) != 0, completedBitSet);
 				}
