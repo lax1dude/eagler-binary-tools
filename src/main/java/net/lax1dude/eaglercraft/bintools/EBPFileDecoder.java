@@ -3,8 +3,10 @@ package net.lax1dude.eaglercraft.bintools;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import javax.imageio.ImageIO;
 
@@ -36,27 +38,14 @@ public class EBPFileDecoder {
 	}
 
 	public static void _main(String[] args) throws IOException {
-		if(args.length == 1) {
-			File input = new File(args[0]);
+		if(args.length > 1 && args.length < 4 && args[0].equals("-r")) {
+			File input = new File(args[1]);
 			if(!input.isDirectory()) {
 				System.err.println("Error: Not a directory: " + input.getAbsolutePath());
 				System.exit(-1);
 				return;
 			}
-			File[] f = input.listFiles();
-			for(int i = 0; i < f.length; ++i) {
-				String name = f[i].getAbsolutePath();
-				if(!name.toLowerCase().endsWith(".ebp")) {
-					continue;
-				}
-				File ff = new File(name.substring(0, name.length() - 3) + "png");
-				System.out.println(f[i].getName());
-				BufferedImage img;
-				try(InputStream is = new FileInputStream(f[i])) {
-					img = read(is);
-				}
-				ImageIO.write(img, "PNG", ff);
-			}
+			convertDir(input, args.length == 3 ? new File(args[2]) : input);
 		}else if(args.length == 2) {
 			System.out.println("Reading input file...");
 			BufferedImage img;
@@ -68,7 +57,31 @@ public class EBPFileDecoder {
 			ImageIO.write(img, "PNG", output);
 		}else {
 			System.out.println("Usage: ebp-decode <input file> <output file>");
-			System.out.println("       ebp-decode <directory>");
+			System.out.println("       ebp-decode -r <directory> [output directory]");
+		}
+	}
+
+	public static void convertDir(File inputDir, File outputDir) throws IOException {
+		if(!outputDir.isDirectory() && !outputDir.mkdirs()) {
+			throw new IOException("Could not create directory: " + outputDir.getAbsolutePath());
+		}
+		File[] f = inputDir.listFiles();
+		for(int i = 0; i < f.length; ++i) {
+			String name = f[i].getName();
+			if(f[i].isDirectory()) {
+				convertDir(f[i], new File(outputDir, name));
+				continue;
+			}
+			if(!name.toLowerCase().endsWith(".ebp")) {
+				continue;
+			}
+			File ff = new File(outputDir, name.substring(0, name.length() - 3) + "png");
+			System.out.println(f[i].getAbsolutePath());
+			BufferedImage img;
+			try(InputStream is = new FileInputStream(f[i])) {
+				img = read(is);
+			}
+			ImageIO.write(img, "PNG", ff);
 		}
 	}
 
