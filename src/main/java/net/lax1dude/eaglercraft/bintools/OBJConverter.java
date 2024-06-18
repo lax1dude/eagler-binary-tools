@@ -83,8 +83,7 @@ public class OBJConverter {
 			if(l[0].equals("f")) {
 				if(l.length != 4) {
 					printTriangulationMessage();
-					System.exit(-1);
-					return;
+					throw new IOException("Incompatible model! (This can be fixed)");
 				}
 				String[] v1 = l[1].split("/");
 				String[] v2 = l[2].split("/");
@@ -146,11 +145,13 @@ public class OBJConverter {
 				}
 			}
 			if(flag) {
+				if(l > 65535) {
+					throw new IOException("Too many vertices!");
+				}
 				indexbuffer.add(l);
 				indexablevboentries.add(v);
 			}
 		}
-		
 
 		DataOutputStream o = new DataOutputStream(out);
 		o.write((v1_8 ? "!EAG$mdl" : "!EAG%mdl").getBytes(StandardCharsets.US_ASCII));
@@ -173,7 +174,7 @@ public class OBJConverter {
 		o.close();
 	}
 
-	private static void printTriangulationMessage() {
+	static void printTriangulationMessage() {
 		System.err.println("=====================================");
 		System.err.println("THIS OBJ FILE IS NOT COMPATIBLE WITH EAGLERCRAFT!");
 		System.err.println();

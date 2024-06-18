@@ -61,6 +61,7 @@ public class EaglerBinaryTools {
 			return;
 		case "skybox-gen":
 		case "skyboxgen":
+			SkyboxGen._main(argz);
 			return;
 		case "light-mesh-gen":
 		case "lightmeshgen":
