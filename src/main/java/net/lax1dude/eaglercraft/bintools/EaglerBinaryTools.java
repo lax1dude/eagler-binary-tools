@@ -65,6 +65,7 @@ public class EaglerBinaryTools {
 			return;
 		case "light-mesh-gen":
 		case "lightmeshgen":
+			LightMeshGen._main(argz);
 			return;
 		case "eagler-moon-gen":
 		case "eaglermoongen":
@@ -79,7 +80,7 @@ public class EaglerBinaryTools {
 	}
 
 	private static void usage() {
-		System.out.println("Usage: java -jar EaglerBinaryTools.jar <epkcompiler|legacy-epkcompiler|epkdecompiler|obj2mdl-1.5|obj2mdl-1.8|ebp-encode|ebp-decode|skybox-gen|light-mesh-gen|eagler-moon-gen|lens-flare-gen> [args...]");
+		System.out.println("Usage: java -jar EaglerBinaryTools.jar <epkcompiler|legacy-epkcompiler|epkdecompiler|obj2mdl-1.5|obj2mdl-1.8|ebp-encode|ebp-decode|skybox-gen|light-mesh-gen|eagler-bmp-gen> [args...]");
 		System.out.println(" - 'epkcompiler': Compile an EPK file from a folder");
 		System.out.println(" - 'legacy-epkcompiler': Compile an EPK file in legacy format");
 		System.out.println(" - 'epkdecompiler': Decompile an EPK file into a folder");
