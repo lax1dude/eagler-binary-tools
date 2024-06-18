@@ -67,11 +67,9 @@ public class EaglerBinaryTools {
 		case "lightmeshgen":
 			LightMeshGen._main(argz);
 			return;
-		case "eagler-moon-gen":
-		case "eaglermoongen":
-			return;
-		case "lens-flare-gen":
-		case "lensflaregen":
+		case "eagler-bmp-gen":
+		case "eaglerbmpgen":
+			EaglerBMPGen._main(argz);
 			return;
 		default:
 			usage();
@@ -90,8 +88,7 @@ public class EaglerBinaryTools {
 		System.out.println(" - 'ebp-decode': Decode EBP file to PNG");
 		System.out.println(" - 'skybox-gen': Generate skybox.dat from OBJ for shader packs");
 		System.out.println(" - 'light-mesh-gen': Generate light_point.dat from OBJ for shader packs");
-		System.out.println(" - 'eagler-moon-gen': Generate eagler_moon.bmp from PNG for shader packs");
-		System.out.println(" - 'lens-flare-gen': Generate lens_streaks.bmp, lens_ghosts.bmp from PNG for shader packs");
+		System.out.println(" - 'eagler-bmp-gen': Generate moon and lens flare BMP textures from PNG for shader packs");
 	}
 
 }
