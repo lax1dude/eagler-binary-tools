@@ -130,7 +130,7 @@ To generate your own skybox, you must break the mesh into a top and bottom half,
 
 Make sure the origin point of the mesh (0, 0, 0) is in the center where the player is meant to view the inside of the skybox from.
 
-## 'light-mesh-gen': Generate light_point.dat from OBJ for shader packs
+## 'light-mesh-gen': Generate light_point_mesh.dat from OBJ for shader packs
 
 One of the tricks EaglercraftX 1.8 uses to speed up dynamic lighting in shaders is to draw a spherical mesh on the screen using a matrix that rescales it to only cover the pixels affected by the current dynamic light being rendered, and then only calculate lighting on those pixels. The mesh used for this trick is stored in a file called "light_point_mesh.dat".
 
