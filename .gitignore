@@ -1,3 +1,9 @@
 .classpath
 .project
 bin
+
+.idea
+samples/obj2mdl-fnaw/output
+samples/obj2mdl-fnaw/tests
+build
+.gradle

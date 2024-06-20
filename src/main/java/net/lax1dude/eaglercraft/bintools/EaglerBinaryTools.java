@@ -25,55 +25,78 @@ public class EaglerBinaryTools {
 		String[] argz = new String[args.length - 1];
 		System.arraycopy(args, 1, argz, 0, argz.length);
 		switch(args[0].toLowerCase()) {
-		case "epkcompiler":
-		case "epkcompile":
-			EPKCompiler._main(argz);
-			return;
-		case "legacy-epkcompiler":
-		case "legacyepkcompiler":
-		case "legacy-epkcompile":
-		case "legacyepkcompile":
-			EPKCompilerLegacy._main(argz);
-			return;
-		case "epkdecompiler":
-			EPKDecompiler._main(argz);
-			return;
-		case "obj2mdl-1.5":
-		case "obj2mdl1.5":
-			OBJConverter._main(argz, false);
-			return;
-		case "obj2mdl-1.8":
-		case "obj2mdl1.8":
-		case "obj2mdl":
-			OBJConverter._main(argz, true);
-			return;
-		case "ebp-encode":
-		case "ebpencode":
-		case "ebp-encoder":
-		case "ebpencoder":
-			EBPFileEncoder._main(argz);
-			return;
-		case "ebp-decode":
-		case "ebpdecode":
-		case "ebp-decoder":
-		case "ebpdecoder":
-			EBPFileDecoder._main(argz);
-			return;
-		case "skybox-gen":
-		case "skyboxgen":
-			SkyboxGen._main(argz);
-			return;
-		case "light-mesh-gen":
-		case "lightmeshgen":
-			LightMeshGen._main(argz);
-			return;
-		case "eagler-bmp-gen":
-		case "eaglerbmpgen":
-			EaglerBMPGen._main(argz);
-			return;
-		default:
-			usage();
-			return;
+			case "epkcompiler":
+			case "epkcompile":
+				EPKCompiler._main(argz);
+				return;
+			case "legacy-epkcompiler":
+			case "legacyepkcompiler":
+			case "legacy-epkcompile":
+			case "legacyepkcompile":
+				EPKCompilerLegacy._main(argz);
+				return;
+			case "epkdecompiler":
+				EPKDecompiler._main(argz);
+				return;
+			case "obj2mdl-1.5-old":
+			case "obj2mdl-1.5old":
+			case "obj2mdl1.5-old":
+			case "obj2mdl1.5old":
+				OBJConverter._main(argz, false);
+				return;
+			case "obj2mdl-1.8-old":
+			case "obj2mdl-1.8old":
+			case "obj2mdl1.8-old":
+			case "obj2mdl-old":
+			case "obj2mdlold":
+				OBJConverter._main(argz, true);
+				return;
+			case "obj2mdl-1.5-new":
+			case "obj2mdl-1.5new":
+			case "obj2mdl1.5-new":
+			case "obj2mdl1.5new":
+			case "obj2mdl-1.5":
+			case "obj2mdl1.5":
+				OptimizedOBJConverter._main(argz, false);
+				return;
+			case "obj2mdl-1.8-new":
+			case "obj2mdl-1.8new":
+			case "obj2mdl1.8-new":
+			case "obj2mdl1.8new":
+			case "obj2mdl-new":
+			case "obj2mdlnew":
+			case "obj2mdl-1.8":
+			case "obj2mdl1.8":
+			case "obj2mdl":
+				OptimizedOBJConverter._main(argz, true);
+				return;
+			case "ebp-encode":
+			case "ebpencode":
+			case "ebp-encoder":
+			case "ebpencoder":
+				EBPFileEncoder._main(argz);
+				return;
+			case "ebp-decode":
+			case "ebpdecode":
+			case "ebp-decoder":
+			case "ebpdecoder":
+				EBPFileDecoder._main(argz);
+				return;
+			case "skybox-gen":
+			case "skyboxgen":
+				SkyboxGen._main(argz);
+				return;
+			case "light-mesh-gen":
+			case "lightmeshgen":
+				LightMeshGen._main(argz);
+				return;
+			case "eagler-bmp-gen":
+			case "eaglerbmpgen":
+				EaglerBMPGen._main(argz);
+				return;
+			default:
+				usage();
+				return;
 		}
 	}
 
@@ -84,6 +107,8 @@ public class EaglerBinaryTools {
 		System.out.println(" - 'epkdecompiler': Decompile an EPK file into a folder");
 		System.out.println(" - 'obj2mdl-1.5': Compile FNAW skin MDL file for 1.5");
 		System.out.println(" - 'obj2mdl-1.8': Compile FNAW skin MDL file for 1.8");
+		System.out.println(" - 'obj2mdl-1.5-old': Compile FNAW skin MDL file for 1.5 using the old OBJ converter");
+		System.out.println(" - 'obj2mdl-1.8-old': Compile FNAW skin MDL file for 1.8 using the old OBJ converter");
 		System.out.println(" - 'ebp-encode': Encode EBP file from PNG");
 		System.out.println(" - 'ebp-decode': Decode EBP file to PNG");
 		System.out.println(" - 'skybox-gen': Generate skybox.dat from OBJ for shader packs");

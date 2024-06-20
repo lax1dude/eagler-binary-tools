@@ -163,6 +163,6 @@ Mipmap levels will be generated automatically and embedded in the Eagler BMP fil
 
 ## Compiling and Contributing
 
-The code in the `src/main/java` folder is written in plain Java. There are no dependencies besides what is already included by default in the JRE. Minimum required Java version is 8, just compile to JAR and you're ready to go.
+The code in the `src/main/java` folder is written in plain Java. There are no dependencies besides what is already included by default in the JRE & JUnit for tests. Minimum required Java version is 8, just run `gradlew build`.
 
 **For a PR:** Tabs, not spaces, and format the code like the Eclipse auto format tool on factory settings.

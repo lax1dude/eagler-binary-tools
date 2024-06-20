@@ -1,0 +1,43 @@
+plugins {
+    id 'java'
+}
+
+group = 'net.lax1dude.eaglercraft.bintools'
+version = ''
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+    }
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.10.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
+}
+
+jar {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    compileJava.options.encoding = 'UTF-8'
+    javadoc.options.encoding = 'UTF-8'
+    javadoc.options.addStringOption('Xdoclint:none', '-quiet')
+
+    manifest {
+        attributes(
+                'Main-Class': 'net.lax1dude.eaglercraft.bintools.EaglerBinaryTools'
+        )
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
