@@ -112,7 +112,7 @@ public class EaglerBinaryTools {
 		System.out.println(" - 'ebp-encode': Encode EBP file from PNG");
 		System.out.println(" - 'ebp-decode': Decode EBP file to PNG");
 		System.out.println(" - 'skybox-gen': Generate skybox.dat from OBJ for shader packs");
-		System.out.println(" - 'light-mesh-gen': Generate light_point.dat from OBJ for shader packs");
+		System.out.println(" - 'light-mesh-gen': Generate light_point_mesh.dat from OBJ for shader packs");
 		System.out.println(" - 'eagler-bmp-gen': Generate moon and lens flare BMP textures from PNG for shader packs");
 	}
 

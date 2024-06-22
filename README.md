@@ -24,7 +24,7 @@ Usage: java -jar EaglerBinaryTools.jar <epkcompiler|legacy-epkcompiler|
  - 'ebp-encode': Encode EBP file from PNG
  - 'ebp-decode': Decode EBP file to PNG
  - 'skybox-gen': Generate skybox.dat from OBJ for shader packs
- - 'light-mesh-gen': Generate light_point.dat from OBJ for shader packs
+ - 'light-mesh-gen': Generate light_point_mesh.dat from OBJ for shader packs
  - 'eagler-bmp-gen': Generate moon and lens flare BMP textures from PNG
     for shader packs
 ```
@@ -115,7 +115,7 @@ If you use the `--labPBR` option, the EBP files will automatically be converted 
 
 ## 'skybox-gen': Generate skybox.dat from OBJ for shader packs
 
-EaglercraftX 1.8 clients include a file called "skybox.dat" in the deferred shaders folder. This file contains the special mesh used for the skybox used whenever shaders are enabled, along with a special lookup texture that is used when caching atmospheric scattering data. It's not as much of a "skybox" as it is a "skydome" in order to use per-vertex shading to interpolate between cached atmospheric scatteing values.
+EaglercraftX 1.8 clients include a file called "skybox.dat" in the deferred shaders folder. This file contains the special mesh used for the skybox used whenever shaders are enabled, along with a special lookup texture that is used when caching atmospheric scattering data. It's not as much of a "skybox" as it is a "skydome" in order to use per-vertex shading to interpolate between cached atmospheric scattering values.
 
 ```
 Usage: skybox-gen <top OBJ> <bottom OBJ> <output file>
