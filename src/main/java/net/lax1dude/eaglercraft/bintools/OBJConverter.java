@@ -50,9 +50,10 @@ public class OBJConverter {
 		System.out.println("Exporting " + (v1_8 ? "1.8" : "1.5") + " MDL: " + output.getAbsolutePath());
 		boolean tex = args[2].equalsIgnoreCase("true") || args[2].equals("1");
 		if (!output.exists()) {
-			if (!output.getParentFile().exists())
-				if (!output.getParentFile().mkdirs())
-					throw new RuntimeException("Failed to create parent dir!");
+			if (output.getParentFile() != null)
+				if (!output.getParentFile().exists())
+					if (!output.getParentFile().mkdirs())
+						throw new RuntimeException("Failed to create parent dir!");
 			if (!output.createNewFile())
 				throw new RuntimeException("Failed to create file!");
 		}
