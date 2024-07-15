@@ -23,10 +23,12 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
 }
 
-jar {
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
+java {
+	sourceCompatibility = JavaVersion.VERSION_1_8
+	targetCompatibility = JavaVersion.VERSION_1_8
+}
 
+jar {
     compileJava.options.encoding = 'UTF-8'
     javadoc.options.encoding = 'UTF-8'
     javadoc.options.addStringOption('Xdoclint:none', '-quiet')
