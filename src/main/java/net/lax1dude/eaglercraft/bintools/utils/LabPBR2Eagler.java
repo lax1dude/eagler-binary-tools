@@ -22,7 +22,7 @@ public class LabPBR2Eagler {
 	/**
 	 * See net.lax1dude.eaglercraft.v1_8.opengl.ext.deferred.texture.PBRTextureMapUtils
 	 */
-	public static void convertLabPBRToEagler(BufferedImage input, BufferedImage output) {
+	public static void convertLabPBRToEaglerLegacy(BufferedImage input, BufferedImage output) {
 		for(int w = input.getWidth(), x = 0; x < w; ++x) {
 			for(int h = input.getHeight(), y = 0; y < h; ++y) {
 				int pixel = input.getRGB(x, y);
@@ -33,13 +33,28 @@ public class LabPBR2Eagler {
 		}
 	}
 
+	public static void convertLabPBRToEagler(BufferedImage input, BufferedImage output) {
+		for(int w = input.getWidth(), x = 0; x < w; ++x) {
+			for(int h = input.getHeight(), y = 0; y < h; ++y) {
+				int pixel = input.getRGB(x, y);
+				int a = (pixel >>> 24) & 0xFF;
+				if(a == 0xFF) a = 0;
+				int b = ((pixel & 0xFF) - 65) * 255 / 190;
+				if(b < 0) b = 0;
+				output.setRGB(x, y, (pixel & 0x00FFFF00) | Math.min(a << 2, 0xFF) | ((255 - b) << 24));
+			}
+		}
+	}
+
 	public static void convertEaglerToLabPBR(BufferedImage input, BufferedImage output) {
 		for(int w = input.getWidth(), x = 0; x < w; ++x) {
 			for(int h = input.getHeight(), y = 0; y < h; ++y) {
 				int pixel = input.getRGB(x, y);
 				int a = (pixel >>> 2) & 0x3F;
 				if(a == 0) a = 0xFF;
-				output.setRGB(x, y, (pixel & 0x00FFFF00) | (a << 24));
+				int b = 255 - (pixel >>> 24);
+				if(b > 0) b = (b * 190 / 255) + 65;
+				output.setRGB(x, y, (pixel & 0x00FFFF00) | (a << 24) | b);
 			}
 		}
 	}

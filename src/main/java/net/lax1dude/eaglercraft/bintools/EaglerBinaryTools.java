@@ -76,6 +76,12 @@ public class EaglerBinaryTools {
 			case "ebpencoder":
 				EBPFileEncoder._main(argz);
 				return;
+			case "legacy-ebp-encode":
+			case "legacyebpencode":
+			case "legacy-ebp-encoder":
+			case "legacyebpencoder":
+				EBPFileEncoderLegacy._main(argz);
+				return;
 			case "ebp-decode":
 			case "ebpdecode":
 			case "ebp-decoder":
@@ -110,6 +116,7 @@ public class EaglerBinaryTools {
 		System.out.println(" - 'obj2mdl-1.5-old': Compile FNAW skin MDL file for 1.5 using the old OBJ converter");
 		System.out.println(" - 'obj2mdl-1.8-old': Compile FNAW skin MDL file for 1.8 using the old OBJ converter");
 		System.out.println(" - 'ebp-encode': Encode EBP file from PNG");
+		System.out.println(" - 'legacy-ebp-encode': Encode EBP file from PNG in legacy format");
 		System.out.println(" - 'ebp-decode': Decode EBP file to PNG");
 		System.out.println(" - 'skybox-gen': Generate skybox.dat from OBJ for shader packs");
 		System.out.println(" - 'light-mesh-gen': Generate light_point_mesh.dat from OBJ for shader packs");

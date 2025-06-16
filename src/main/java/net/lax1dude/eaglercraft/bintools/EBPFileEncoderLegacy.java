@@ -30,7 +30,7 @@ import net.lax1dude.eaglercraft.bintools.utils.LabPBR2Eagler;
  * POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-public class EBPFileEncoder {
+public class EBPFileEncoderLegacy {
 
 	private static void setBit(int idx, boolean v, byte[] bytes) {
 		int idx2 = idx >> 3;
@@ -63,15 +63,15 @@ public class EBPFileEncoder {
 			File output = new File(args[1]);
 			if(labPBR) {
 				System.out.println("Converting from LabPBR to Eagler...");
-				LabPBR2Eagler.convertLabPBRToEagler(img, img);
+				LabPBR2Eagler.convertLabPBRToEaglerLegacy(img, img);
 			}
 			System.out.println("Encoding EBP: " + output.getAbsolutePath());
 			try(OutputStream os = new FileOutputStream(output)) {
 				writeEBP(img, os);
 			}
 		}else {
-			System.out.println("Usage: ebp-encode [--labPBR] <input file> <output file>");
-			System.out.println("       ebp-encode [--labPBR] -r <directory> [output directory]");
+			System.out.println("Usage: legacy-ebp-encode [--labPBR] <input file> <output file>");
+			System.out.println("       legacy-ebp-encode [--labPBR] -r <directory> [output directory]");
 		}
 	}
 
@@ -97,7 +97,7 @@ public class EBPFileEncoder {
 			System.out.println(f[i].getAbsolutePath());
 			BufferedImage img = ImageIO.read(f[i]);
 			if(labPBR) {
-				LabPBR2Eagler.convertLabPBRToEagler(img, img);
+				LabPBR2Eagler.convertLabPBRToEaglerLegacy(img, img);
 			}
 			try(OutputStream os = new FileOutputStream(ff)) {
 				writeEBP(img, os);
@@ -106,43 +106,37 @@ public class EBPFileEncoder {
 	}
 
 	public static void writeEBP(BufferedImage img, OutputStream fos) throws IOException {
-		int w = img.getWidth();
-		int h = img.getHeight();
-		int[] pixels = img.getRGB(0, 0, w, h, null, 0, w);
-
-		boolean alphaCh = false;
-		Set<Integer> colorPalette = new HashSet();
-		for(int i = 0; i < pixels.length; ++i) {
-			int c = pixels[i];
-			if((c & 0xFF000000) == 0) {
-				c = 0;
-			}
-			if((c & 0xFF000000) != 0xFF000000) {
-				alphaCh = true;
-			}
-			if(c == 0xFF000000) {
-				continue;
-			}
-			colorPalette.add(c);
-		}
-
 		fos.write(new byte[] { '%', 'E', 'B', 'P'});
 		fos.write(1); // v1
-		fos.write(alphaCh ? 4 : 3); // components
+		fos.write(3); // 3 component
+		int w = img.getWidth();
+		int h = img.getHeight();
 		fos.write(w & 0xFF);
-		fos.write((w >>> 8) & 0xFF);
+		fos.write((w >> 8) & 0xFF);
 		fos.write(h & 0xFF);
-		fos.write((h >>> 8) & 0xFF);
-
+		fos.write((h >> 8) & 0xFF);
+		
+		int[] pixels = img.getRGB(0, 0, w, h, null, 0, w);
+		
+		Set<Integer> colorPalette = new HashSet();
+		for(int i = 0; i < pixels.length; ++i) {
+			if((pixels[i] & 0xFF000000) == 0) {
+				pixels[i] = 0;
+			}else {
+				pixels[i] &= 0xFFFFFF;
+			}
+			if(pixels[i] == 0) {
+				continue;
+			}
+			colorPalette.add(pixels[i]);
+		}
+		
 		if(colorPalette.size() > 255) {
 			fos.write(0); // type is no palette
 			for(int i = 0; i < pixels.length; ++i) {
-				fos.write((pixels[i] >>> 16) & 0xFF);
-				fos.write((pixels[i] >>> 8) & 0xFF);
+				fos.write((pixels[i] >> 16) & 0xFF);
+				fos.write((pixels[i] >> 8) & 0xFF);
 				fos.write(pixels[i] & 0xFF);
-				if(alphaCh) {
-					fos.write(pixels[i] >>> 24);
-				}
 			}
 		}else {
 			Map<Integer,Integer> paletteHelper = new HashMap();
@@ -150,16 +144,13 @@ public class EBPFileEncoder {
 			fos.write(colorPalette.size()); // write palette size
 			Iterator<Integer> paletteItr = colorPalette.iterator();
 			int paletteIdx = 0;
-			paletteHelper.put(0xFF000000, 0);
+			paletteHelper.put(0, 0);
 			while(paletteItr.hasNext()) {
 				int j = paletteItr.next().intValue();
 				paletteHelper.put(j, ++paletteIdx);
-				fos.write((j >>> 16) & 0xFF);
-				fos.write((j >>> 8) & 0xFF);
+				fos.write((j >> 16) & 0xFF);
+				fos.write((j >> 8) & 0xFF);
 				fos.write(j & 0xFF);
-				if(alphaCh) {
-					fos.write(j >>> 24);
-				}
 			}
 			int bpp = 1;
 			while((paletteIdx >> bpp) != 0) {
@@ -167,21 +158,17 @@ public class EBPFileEncoder {
 			}
 			fos.write(bpp); // write bpp
 			int totalBits = pixels.length * bpp;
-			byte[] completedBitSet = new byte[(totalBits + 7) >> 3];
+			byte[] completedBitSet = new byte[(totalBits & 7) == 0 ? (totalBits >> 3) : ((totalBits >> 3) + 1)];
 			int bsi = 0;
 			for(int i = 0; i < pixels.length; ++i) {
-				int c = pixels[i];
-				if((c & 0xFF000000) == 0) {
-					c = 0;
-				}
-				int wr = paletteHelper.get(c);
+				int wr = paletteHelper.get(pixels[i]);
 				for(int j = bpp - 1; j >= 0; --j) {
 					setBit(bsi++, ((wr >> j) & 1) != 0, completedBitSet);
 				}
 			}
 			fos.write(completedBitSet.length & 0xFF); // write expect length (as 24 bits not 32)
-			fos.write((completedBitSet.length >>> 8) & 0xFF);
-			fos.write((completedBitSet.length >>> 16) & 0xFF);
+			fos.write((completedBitSet.length >> 8) & 0xFF);
+			fos.write((completedBitSet.length >> 16) & 0xFF);
 			fos.write(completedBitSet); // write the bits
 		}
 		fos.write(new byte[] { ':', '>' });
