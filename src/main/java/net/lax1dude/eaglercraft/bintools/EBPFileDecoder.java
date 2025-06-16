@@ -1,18 +1,4 @@
-package net.lax1dude.eaglercraft.bintools;
-
-import java.awt.image.BufferedImage;
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.imageio.ImageIO;
-
-import net.lax1dude.eaglercraft.bintools.utils.IOUtils;
-import net.lax1dude.eaglercraft.bintools.utils.LabPBR2Eagler;
-
-/**
+/*
  * Copyright (c) 2023-2024 lax1dude. All Rights Reserved.
  * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
@@ -27,48 +13,64 @@ import net.lax1dude.eaglercraft.bintools.utils.LabPBR2Eagler;
  * POSSIBILITY OF SUCH DAMAGE.
  * 
  */
+
+package net.lax1dude.eaglercraft.bintools;
+
+import java.awt.image.BufferedImage;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.imageio.ImageIO;
+
+import net.lax1dude.eaglercraft.bintools.utils.IOUtils;
+import net.lax1dude.eaglercraft.bintools.utils.LabPBR2Eagler;
+
 public class EBPFileDecoder {
 
 	private static int getFromBits(int idxx, int bits, byte[] bytes) {
 		int startByte = idxx >> 3;
 		int endByte = (idxx + bits - 1) >> 3;
-		if(startByte == endByte) {
-			return (((int)bytes[startByte] & 0xff) >> (8 - (idxx & 7) - bits)) & ((1 << bits) - 1);
-		}else {
-			return (((((int)bytes[startByte] & 0xff) << 8) | ((int)bytes[endByte] & 0xff)) >> (16 - (idxx & 7) - bits)) & ((1 << bits) - 1);
+		if (startByte == endByte) {
+			return (((int) bytes[startByte] & 0xff) >> (8 - (idxx & 7) - bits)) & ((1 << bits) - 1);
+		} else {
+			return (((((int) bytes[startByte] & 0xff) << 8) | ((int) bytes[endByte] & 0xff)) >> (16 - (idxx & 7)
+					- bits)) & ((1 << bits) - 1);
 		}
 	}
 
 	public static void _main(String[] args) throws IOException {
 		boolean labPBR = false;
-		if(args.length > 1 && args[0].equalsIgnoreCase("--labPBR")) {
+		if (args.length > 1 && args[0].equalsIgnoreCase("--labPBR")) {
 			labPBR = true;
 			String[] e = new String[args.length - 1];
 			System.arraycopy(args, 1, e, 0, e.length);
 			args = e;
 		}
-		if(args.length > 1 && args.length < 4 && args[0].equalsIgnoreCase("-r")) {
+		if (args.length > 1 && args.length < 4 && args[0].equalsIgnoreCase("-r")) {
 			File input = new File(args[1]);
-			if(!input.isDirectory()) {
+			if (!input.isDirectory()) {
 				System.err.println("Error: Not a directory: " + input.getAbsolutePath());
 				System.exit(-1);
 				return;
 			}
 			convertDir(input, args.length == 3 ? new File(args[2]) : input, labPBR);
-		}else if(args.length == 2) {
+		} else if (args.length == 2) {
 			System.out.println("Reading input file...");
 			BufferedImage img;
-			try(InputStream is = new FileInputStream(new File(args[0]))) {
+			try (InputStream is = new FileInputStream(new File(args[0]))) {
 				img = readEBP(is);
 			}
-			if(labPBR) {
+			if (labPBR) {
 				System.out.println("Converting from Eagler to LabPBR...");
 				LabPBR2Eagler.convertEaglerToLabPBR(img, img);
 			}
 			File output = new File(args[1]);
 			System.out.println("Writing PNG: " + output.getAbsolutePath());
 			ImageIO.write(img, "PNG", output);
-		}else {
+		} else {
 			System.out.println("Usage: ebp-decode [--labPBR] <input file> <output file>");
 			System.out.println("       ebp-decode [--labPBR] -r <directory> [output directory]");
 		}
@@ -79,26 +81,26 @@ public class EBPFileDecoder {
 	}
 
 	public static void convertDir(File inputDir, File outputDir, boolean labPBR) throws IOException {
-		if(!outputDir.isDirectory() && !outputDir.mkdirs()) {
+		if (!outputDir.isDirectory() && !outputDir.mkdirs()) {
 			throw new IOException("Could not create directory: " + outputDir.getAbsolutePath());
 		}
 		File[] f = inputDir.listFiles();
-		for(int i = 0; i < f.length; ++i) {
+		for (int i = 0; i < f.length; ++i) {
 			String name = f[i].getName();
-			if(f[i].isDirectory()) {
+			if (f[i].isDirectory()) {
 				convertDir(f[i], new File(outputDir, name), labPBR);
 				continue;
 			}
-			if(!name.toLowerCase().endsWith(".ebp")) {
+			if (!name.toLowerCase().endsWith(".ebp")) {
 				continue;
 			}
 			File ff = new File(outputDir, name.substring(0, name.length() - 3) + "png");
 			System.out.println(f[i].getAbsolutePath());
 			BufferedImage img;
-			try(InputStream is = new FileInputStream(f[i])) {
+			try (InputStream is = new FileInputStream(f[i])) {
 				img = readEBP(is);
 			}
-			if(labPBR) {
+			if (labPBR) {
 				LabPBR2Eagler.convertEaglerToLabPBR(img, img);
 			}
 			ImageIO.write(img, "PNG", ff);
@@ -114,54 +116,55 @@ public class EBPFileDecoder {
 	}
 
 	public static BufferedImage readEBP(InputStream is) throws IOException {
-		if(readByte(is) != '%' || readByte(is) != 'E' || readByte(is) != 'B' || readByte(is) != 'P') {
+		if (readByte(is) != '%' || readByte(is) != 'E' || readByte(is) != 'B' || readByte(is) != 'P') {
 			throw new IOException("Not an EBP file!");
 		}
 		int v = readByte(is);
-		if(v != 1) {
+		if (v != 1) {
 			throw new IOException("Unknown EBP version: " + v);
 		}
 		int c = readByte(is);
-		if(c != 3 && c != 4) {
+		if (c != 3 && c != 4) {
 			throw new IOException("Invalid component count: " + c);
 		}
 		int w = readByte(is) | (readByte(is) << 8);
 		int h = readByte(is) | (readByte(is) << 8);
 		BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 		v = readByte(is);
-		if(v == 0) {
-			if(c == 3) {
-				for(int i = 0, l = w * h; i < l; ++i) {
+		if (v == 0) {
+			if (c == 3) {
+				for (int i = 0, l = w * h; i < l; ++i) {
 					img.setRGB(i % w, i / w, readByte(is) | (readByte(is) << 8) | (readByte(is) << 16) | 0xFF000000);
 				}
-			}else {
-				for(int i = 0, l = w * h; i < l; ++i) {
-					img.setRGB(i % w, i / w, readByte(is) | (readByte(is) << 8) | (readByte(is) << 16) | (readByte(is) << 24));
+			} else {
+				for (int i = 0, l = w * h; i < l; ++i) {
+					img.setRGB(i % w, i / w,
+							readByte(is) | (readByte(is) << 8) | (readByte(is) << 16) | (readByte(is) << 24));
 				}
 			}
-		}else if(v == 1) {
+		} else if (v == 1) {
 			int paletteSize = readByte(is) + 1;
 			int[] palette = new int[paletteSize];
 			palette[0] = 0xFF000000;
-			if(c == 3) {
-				for(int i = 1; i < paletteSize; ++i) {
+			if (c == 3) {
+				for (int i = 1; i < paletteSize; ++i) {
 					palette[i] = readByte(is) | (readByte(is) << 8) | (readByte(is) << 16) | 0xFF000000;
 				}
-			}else {
-				for(int i = 1; i < paletteSize; ++i) {
+			} else {
+				for (int i = 1; i < paletteSize; ++i) {
 					palette[i] = readByte(is) | (readByte(is) << 8) | (readByte(is) << 16) | (readByte(is) << 24);
 				}
 			}
 			int bpp = readByte(is);
 			byte[] readSet = new byte[readByte(is) | (readByte(is) << 8) | (readByte(is) << 16)];
 			IOUtils.readFully(is, readSet);
-			for(int i = 0, l = w * h; i < l; ++i) {
+			for (int i = 0, l = w * h; i < l; ++i) {
 				img.setRGB(i % w, i / w, palette[getFromBits(i * bpp, bpp, readSet)]);
 			}
-		}else {
+		} else {
 			throw new IOException("Unknown EBP storage type: " + v);
 		}
-		if(readByte(is) != ':' || readByte(is) != '>') {
+		if (readByte(is) != ':' || readByte(is) != '>') {
 			throw new IOException("Invalid footer! (:>)");
 		}
 		return img;

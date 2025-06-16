@@ -1,9 +1,4 @@
-package net.lax1dude.eaglercraft.bintools.utils;
-
-import java.io.IOException;
-import java.io.InputStream;
-
-/**
+/*
  * Copyright (c) 2024 lax1dude. All Rights Reserved.
  * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
@@ -18,11 +13,17 @@ import java.io.InputStream;
  * POSSIBILITY OF SUCH DAMAGE.
  * 
  */
+
+package net.lax1dude.eaglercraft.bintools.utils;
+
+import java.io.IOException;
+import java.io.InputStream;
+
 public class IOUtils {
 
 	public static int readFully(InputStream is, byte[] out) throws IOException {
 		int i = 0, j;
-		while(i < out.length && (j = is.read(out, i, out.length - i)) != -1) {
+		while (i < out.length && (j = is.read(out, i, out.length - i)) != -1) {
 			i += j;
 		}
 		return i;
@@ -30,7 +31,7 @@ public class IOUtils {
 
 	public static long skipFully(InputStream is, long skip) throws IOException {
 		long i = 0, j;
-		while(i < skip && (j = is.skip(skip - i)) != 0) {
+		while (i < skip && (j = is.skip(skip - i)) != 0) {
 			i += j;
 		}
 		return i;

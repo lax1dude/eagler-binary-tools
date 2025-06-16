@@ -1,14 +1,4 @@
-package net.lax1dude.eaglercraft.bintools;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-
-import net.lax1dude.eaglercraft.bintools.utils.EPKDecompilerSP;
-
-/**
+/*
  * Copyright (c) 2022-2024 lax1dude. All Rights Reserved.
  * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
@@ -23,6 +13,17 @@ import net.lax1dude.eaglercraft.bintools.utils.EPKDecompilerSP;
  * POSSIBILITY OF SUCH DAMAGE.
  * 
  */
+
+package net.lax1dude.eaglercraft.bintools;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
+import net.lax1dude.eaglercraft.bintools.utils.EPKDecompilerSP;
+
 public class EPKDecompiler {
 
 	public static void _main(String[] args) throws IOException {
@@ -31,48 +32,51 @@ public class EPKDecompiler {
 			return;
 		}
 		File input = new File(args[0]);
-		if(!input.isFile()) {
+		if (!input.isFile()) {
 			System.err.println("Input file does not exist!");
 			return;
 		}
 		System.out.println("Decompiling: " + input.getAbsolutePath());
 		File output = new File(args[1]);
-		byte[] inputBytes = new byte[(int)input.length()];
-		try(FileInputStream fis = new FileInputStream(input)) {
+		byte[] inputBytes = new byte[(int) input.length()];
+		try (FileInputStream fis = new FileInputStream(input)) {
 			fis.read(inputBytes);
 		}
 		EPKDecompilerSP epkDecompiler = new EPKDecompilerSP(inputBytes);
-		if(epkDecompiler.isOld()) {
+		if (epkDecompiler.isOld()) {
 			System.out.println("Detected legacy EPK format!");
 		}
 		int filesWritten = 0;
 		try {
 			EPKDecompilerSP.FileEntry f = null;
-			while((f = epkDecompiler.readFile()) != null) {
-				if(f.type.equals("HEAD")) {
-					System.out.println("Skipping HEAD: \"" + f.name + "\": \"" + (new String(f.data, StandardCharsets.US_ASCII)) + "\"");
-				}else if(f.type.equals("FILE")) {
+			while ((f = epkDecompiler.readFile()) != null) {
+				if (f.type.equals("HEAD")) {
+					System.out.println("Skipping HEAD: \"" + f.name + "\": \""
+							+ (new String(f.data, StandardCharsets.US_ASCII)) + "\"");
+				} else if (f.type.equals("FILE")) {
 					String safeName = f.name.replace('\\', '/');
-					if(safeName.startsWith("../") || safeName.contains("/../") || safeName.endsWith("/..") || safeName.equals("..")) {
+					if (safeName.startsWith("../") || safeName.contains("/../") || safeName.endsWith("/..")
+							|| safeName.equals("..")) {
 						System.out.println("Skipping unsafe relative path: \"" + f.name + "\"");
-					}else {
+					} else {
 						File destFile = new File(output, safeName);
 						File parent = destFile.getParentFile();
-						if(!parent.isDirectory()) {
-							if(!parent.mkdirs()) {
+						if (!parent.isDirectory()) {
+							if (!parent.mkdirs()) {
 								throw new IOException("Could not create directory: " + parent.getAbsolutePath());
 							}
 						}
-						try(FileOutputStream fos = new FileOutputStream(destFile)) {
+						try (FileOutputStream fos = new FileOutputStream(destFile)) {
 							fos.write(f.data);
 							++filesWritten;
 						}
 					}
-				}else {
-					System.err.println("Skipping unknown entry type \"" + f.type + "\" name \"" + f.name + "\", data is " + f.data.length + " bytes");
+				} else {
+					System.err.println("Skipping unknown entry type \"" + f.type + "\" name \"" + f.name
+							+ "\", data is " + f.data.length + " bytes");
 				}
 			}
-		}finally {
+		} finally {
 			epkDecompiler.close();
 		}
 		System.out.println("Extracted " + filesWritten + " from the EPK");
